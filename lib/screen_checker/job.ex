@@ -1,10 +1,9 @@
 defmodule ScreenChecker.Job do
   @moduledoc """
-  GenServer that regularly checks screen statuses and logs results to splunk and a local log file
+  Stateless GenServer that regularly checks screen statuses and logs results to splunk
   """
 
   require Logger
-  alias ScreenChecker.Screen
 
   use GenServer
 
@@ -25,8 +24,6 @@ defmodule ScreenChecker.Job do
     {"172.19.18.25", "Wonderland"}
   ]
 
-  @solari_ips Enum.map(@solari_screens, fn {ip, _} -> ip end)
-
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
@@ -35,10 +32,8 @@ defmodule ScreenChecker.Job do
 
   @impl true
   def init(:ok) do
-    init_state = Enum.into(@solari_screens, %{}, &init_screen_status/1)
-
     schedule_refresh(self())
-    {:ok, init_state}
+    {:ok, %{}}
   end
 
   @impl true
@@ -51,18 +46,9 @@ defmodule ScreenChecker.Job do
   def handle_info(:refresh, state) do
     schedule_refresh(self())
 
-    statuses = Enum.map(@solari_ips, fn ip -> {ip, ScreenChecker.Fetch.fetch_status(ip)} end)
+    _ = Enum.each(@solari_screens, &log_status/1)
 
-    {:noreply, state, {:continue, statuses}}
-  end
-
-  @impl true
-  def handle_continue([], state) do
     {:noreply, state}
-  end
-
-  def handle_continue([{ip, status} | rest], state) do
-    {:noreply, put_status(state, ip, status), {:continue, rest}}
   end
 
   defp schedule_refresh(pid) do
@@ -70,17 +56,9 @@ defmodule ScreenChecker.Job do
     :ok
   end
 
-  defp init_screen_status({ip, name}) do
-    {ip, %Screen{ip: ip, name: name}}
-  end
+  defp log_status({ip, name}) do
+    status = ScreenChecker.Fetch.fetch_status(ip)
 
-  defp put_status(state, ip, status) do
-    current_screen = state[ip]
-
-    {result, screen} = Screen.set_status(current_screen, status)
-
-    _ = if result == :updated, do: ScreenChecker.Logger.log_screen_status(screen)
-
-    %{state | ip => screen}
+    _ = ScreenChecker.Logger.log_screen_status(ip, name, status)
   end
 end
