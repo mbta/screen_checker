@@ -32,6 +32,7 @@ defmodule ScreenChecker.Job do
 
   @impl true
   def init(:ok) do
+    Logger.info("Started ScreenChecker.Job")
     schedule_refresh(self())
     {:ok, %{}}
   end
@@ -45,6 +46,8 @@ defmodule ScreenChecker.Job do
 
   def handle_info(:refresh, state) do
     schedule_refresh(self())
+
+    Logger.info("Logging status")
 
     _ = Enum.each(@solari_screens, &log_status/1)
 

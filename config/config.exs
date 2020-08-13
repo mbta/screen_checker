@@ -3,8 +3,6 @@ import Config
 config :logger,
   backends: [{Logger.Backend.Splunk, :splunk}, :console]
 
-config :logger, :console, level: :warn
-
 config :logger, :splunk,
   connector: Logger.Backend.Splunk.Output.Http,
   host: 'https://http-inputs-mbta.splunkcloud.com/services/collector/event',

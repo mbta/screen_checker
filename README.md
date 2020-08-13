@@ -1,9 +1,14 @@
 # ScreenChecker
 
-Script/small application that regularly checks screen statuses and logs them to Splunk.
+Small application that regularly checks screen statuses and logs them to Splunk.
+
+Bootstrap with
+```sh
+asdf install
+mix deps.get
+```
 
 Run with
 ```sh
-mix deps.get
-mix run scripts/screen_checker.exs
+mix run --no-halt
 ```

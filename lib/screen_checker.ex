@@ -1,17 +1,16 @@
 defmodule ScreenChecker do
   @moduledoc false
 
-  use Supervisor
+  use Application
+  require Logger
 
-  def start_link([]) do
-    Supervisor.start_link(__MODULE__, :ok, name: __MODULE__)
-  end
+  def start(_type, _args) do
+    Logger.info("Starting up ScreenChecker")
 
-  def init(:ok) do
-    children = [
-      worker(ScreenChecker.Job, [[name: ScreenChecker.Job]])
-    ]
+    children = [ScreenChecker.Job]
 
-    supervise(children, strategy: :one_for_one)
+    opts = [strategy: :one_for_one, name: ScreenChecker.Supervisor]
+
+    Supervisor.start_link(children, opts)
   end
 end
