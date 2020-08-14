@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-# Run this from the repo root directory (e.g. /c/Users/RTRUser/GitHub/realtime_signs_release_dev)
-# Takes the release node name as an argument (e.g. `$ ./build_release.sh realtime_signs_dev`)
+# Run this from the repo root directory (e.g. /c/Users/RTRUser/GitHub/screen_checker_prod)
+# Takes the release node name as an argument (e.g. `$ ./build_release.sh screen_checker_prod`)
 
 if [ $# -eq 0 ]; then
   echo "No argument provided"
