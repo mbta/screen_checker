@@ -14,6 +14,7 @@ asdf update
 asdf plugin-add erlang || true
 asdf plugin-add elixir || true
 asdf plugin-update --all
+asdf install
 
 mix local.hex --force
 mix local.rebar --force
