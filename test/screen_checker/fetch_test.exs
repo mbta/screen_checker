@@ -5,44 +5,45 @@ defmodule ScreenChecker.FetchTest do
 
   describe "fetch_status/1" do
     test "sends request to the correct url" do
-      with_mock HTTPoison, [get: fn _url, _headers, _opts -> :anything end] do
+      with_mock HTTPoison, get: fn _url, _headers, _opts -> :anything end do
         _ = Fetch.fetch_status("1.2.3.4")
-        assert_called HTTPoison.get("http://1.2.3.4/cgi-bin/getstatus.cgi", :_, :_)
+        assert_called(HTTPoison.get("http://1.2.3.4/cgi-bin/getstatus.cgi", :_, :_))
       end
     end
 
     test "returns :asleep when response body has `\"Temperature\": -1`" do
-      with_mock HTTPoison, [get: fn _url, _headers, _opts -> httpoison_ok(~s[{"Temperature":-1}]) end] do
+      with_mock HTTPoison,
+        get: fn _url, _headers, _opts -> httpoison_ok(~s[{"Temperature":-1}]) end do
         assert :asleep == Fetch.fetch_status("")
       end
     end
 
     test "returns :up when response body has `\"Temperature\": <anything but -1>`" do
-      with_mock HTTPoison, [get: fn _, _, _ -> httpoison_ok(~s[{"Temperature":0}]) end] do
+      with_mock HTTPoison, get: fn _, _, _ -> httpoison_ok(~s[{"Temperature":0}]) end do
         assert :up == Fetch.fetch_status("")
       end
     end
 
     test "returns :connection_error when request failed" do
-      with_mock HTTPoison, [get: fn _, _, _ -> {:error, :reason} end] do
+      with_mock HTTPoison, get: fn _, _, _ -> {:error, :reason} end do
         assert :connection_error == Fetch.fetch_status("")
       end
     end
 
     test "returns {:bad_status, <status>} when a non-200 response was received" do
-      with_mock HTTPoison, [get: fn _, _, _ -> httpoison_ok("", 404) end] do
+      with_mock HTTPoison, get: fn _, _, _ -> httpoison_ok("", 404) end do
         assert {:bad_status, 404} == Fetch.fetch_status("")
       end
     end
 
     test "returns :invalid_response when an unexpected response body was received" do
-      with_mock HTTPoison, [get: fn _, _, _ -> httpoison_ok(~s[{"SomethingElse":true}]) end] do
+      with_mock HTTPoison, get: fn _, _, _ -> httpoison_ok(~s[{"SomethingElse":true}]) end do
         assert :invalid_response == Fetch.fetch_status("")
       end
     end
 
     test "returns :error in all other cases" do
-      with_mock HTTPoison, [get: fn _, _, _ -> :something_else end] do
+      with_mock HTTPoison, get: fn _, _, _ -> :something_else end do
         assert :error == Fetch.fetch_status("")
       end
     end
