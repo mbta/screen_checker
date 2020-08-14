@@ -21,6 +21,3 @@ erl_crash.dump
 
 # Ignore package tarball (built via "mix hex.build").
 screen_checker-*.tar
-
-# Local log file.
-/screen_checker.txt
