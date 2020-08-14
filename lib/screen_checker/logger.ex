@@ -1,4 +1,6 @@
 defmodule ScreenChecker.Logger do
+  @moduledoc false
+
   require Logger
 
   def log_screen_status(ip, name, status) do

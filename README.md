@@ -12,3 +12,8 @@ Run with
 ```sh
 mix run --no-halt
 ```
+
+Test with
+```sh
+ MIX_ENV=test mix coveralls.json
+```

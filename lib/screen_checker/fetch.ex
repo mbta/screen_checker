@@ -1,4 +1,6 @@
 defmodule ScreenChecker.Fetch do
+  @moduledoc false
+
   @headers []
   @opts [timeout: 2000, recv_timeout: 2000]
 
@@ -11,9 +13,7 @@ defmodule ScreenChecker.Fetch do
   end
 
   defp fetch(ip) do
-    url = "http://#{ip}/cgi-bin/getstatus.cgi"
-
-    with {:request, {:ok, response}} <- {:request, HTTPoison.get(url, @headers, @opts)},
+    with {:request, {:ok, response}} <- {:request, request(ip)},
          %{status_code: 200, body: body} <- response,
          {:parse, {:ok, %{"Temperature" => _} = parsed}} <- {:parse, Jason.decode(body)} do
       {:ok, parsed}
@@ -23,5 +23,9 @@ defmodule ScreenChecker.Fetch do
       {:parse, _} -> :invalid_response
       _ -> :error
     end
+  end
+
+  defp request(ip) do
+    HTTPoison.get("http://#{ip}/cgi-bin/getstatus.cgi", @headers, @opts)
   end
 end

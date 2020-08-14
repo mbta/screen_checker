@@ -53,7 +53,7 @@ defmodule ScreenChecker.Job do
   end
 
   defp schedule_refresh(pid) do
-    Process.send_after(pid, :refresh, next_minute_ms())
+    Process.send_after(pid, :refresh, ScreenChecker.Time.next_minute_ms())
     :ok
   end
 
@@ -61,13 +61,5 @@ defmodule ScreenChecker.Job do
     status = ScreenChecker.Fetch.fetch_status(ip)
 
     _ = ScreenChecker.Logger.log_screen_status(ip, name, status)
-  end
-
-  # milliseconds to wait until the start of the next minute
-  defp next_minute_ms do
-    now = DateTime.utc_now()
-    {microsecond, _} = now.microsecond
-    current_ms = now.second * 1000 + div(microsecond, 1000)
-    60 * 1000 - current_ms
   end
 end
