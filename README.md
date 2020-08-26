@@ -18,7 +18,7 @@ Test with
 ```
 
 # Deploying
-Screen checker run as a Windows service on Opstech3.
+Screen checker runs as a Windows service on Opstech3.
 
 The version of Erlang we use is precompiled Erlang/OTP 22.1, installed via [this Windows installer](https://www.erlang-solutions.com/resources/download.html) to `/c/Users/RTRUser/bin/`.
 
