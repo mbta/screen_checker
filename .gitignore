@@ -1,6 +1,9 @@
 # The directory Mix will write compiled artifacts to.
 /_build/
 
+# Previous build is copied here.
+/_build-prev/
+
 # If you run "mix test --cover", coverage assets end up here.
 /cover/
 
@@ -9,6 +12,9 @@
 
 # Where third-party dependencies like ExDoc output generated docs.
 /doc/
+
+# Local log file directory.
+/log/
 
 # Ignore .fetch files in case you like to edit your project deps locally.
 /.fetch
