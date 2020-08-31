@@ -47,7 +47,10 @@ defmodule ScreenChecker.Job do
 
     Logger.info("Logging status")
 
-    _ = Enum.each(@solari_screens, &log_status/1)
+    _ =
+      @solari_screens
+      |> Task.async_stream(&log_status/1, timeout: 20000)
+      |> Stream.run()
 
     {:noreply, state}
   end
