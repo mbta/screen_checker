@@ -6,11 +6,7 @@ defmodule ScreenChecker.Logger do
   def log_screen_status(ip, name, status) do
     message = "#{status_to_message(status)} name=#{name} ip=#{ip}"
 
-    _ =
-      case status do
-        :up -> Logger.info(message)
-        _ -> Logger.error(message)
-      end
+    _ = Logger.info(message)
 
     :ok
   end

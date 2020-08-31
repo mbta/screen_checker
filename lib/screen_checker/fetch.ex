@@ -2,7 +2,7 @@ defmodule ScreenChecker.Fetch do
   @moduledoc false
 
   @headers []
-  @opts [timeout: 2000, recv_timeout: 2000]
+  @opts [timeout: 2_000, recv_timeout: 15_000]
 
   def fetch_status(ip) do
     case fetch(ip) do
