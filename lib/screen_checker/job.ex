@@ -49,7 +49,7 @@ defmodule ScreenChecker.Job do
 
     _ =
       @solari_screens
-      |> Task.async_stream(&log_status/1, ordered: false, timeout: 20000)
+      |> Task.async_stream(&log_status/1, ordered: false, timeout: 20_000)
       |> Stream.run()
 
     {:noreply, state}
