@@ -8,18 +8,18 @@ defmodule ScreenChecker.Job do
   use GenServer
 
   @solari_screens [
-    {"172.19.43.25", "Ashmont"},
-    {"172.19.36.25", "Central"},
-    {"172.19.117.20", "Nubian Platform A"},
-    {"172.19.117.21", "Nubian Platform C"},
-    {"172.19.87.25", "Forest Hills Lobby"},
-    {"172.19.87.26", "Forest Hills Upper Busway"},
-    {"172.19.35.25", "Harvard"},
-    {"172.19.76.25", "Haymarket"},
-    {"172.19.10.25", "Maverick"},
-    {"172.19.82.25", "Ruggles"},
-    {"172.19.73.25", "Sullivan"},
-    {"172.19.18.25", "Wonderland"}
+    {"172.19.43.25", "ashmont"},
+    {"172.19.36.25", "central"},
+    {"172.19.117.20", "nubian_platform_a"},
+    {"172.19.117.21", "nubian_platform_c"},
+    {"172.19.87.25", "forest_hills_lobby"},
+    {"172.19.87.26", "forest_hills_upper_busway"},
+    {"172.19.35.25", "harvard"},
+    {"172.19.76.25", "haymarket"},
+    {"172.19.10.25", "maverick"},
+    {"172.19.82.25", "ruggles"},
+    {"172.19.73.25", "sullivan_square"},
+    {"172.19.18.25", "wonderland"}
   ]
 
   def start_link(opts \\ []) do
