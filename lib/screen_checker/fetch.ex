@@ -18,14 +18,34 @@ defmodule ScreenChecker.Fetch do
          {:parse, {:ok, %{"Temperature" => _} = parsed}} <- {:parse, Jason.decode(body)} do
       {:ok, parsed}
     else
-      {:request, {:error, _}} -> :connection_error
-      %{status_code: status_code} -> {:bad_status, status_code}
-      {:parse, _} -> :invalid_response
-      _ -> :error
+      {:request, {:error, _}} ->
+        case ping_switch(ip) do
+          {:ok, _} -> {:connection_error, true}
+          {:error, _} -> {:connection_error, false}
+        end
+
+      %{status_code: status_code} ->
+        {:bad_status, status_code}
+
+      {:parse, _} ->
+        :invalid_response
+
+      _ ->
+        :error
     end
   end
 
   defp request(ip) do
     HTTPoison.get("http://#{ip}/cgi-bin/getstatus.cgi", @headers, @opts)
+  end
+
+  defp ping_switch(ip) do
+    ip
+    |> switch_ip_from_screen_ip()
+    |> ScreenChecker.ICMP.ping()
+  end
+
+  defp switch_ip_from_screen_ip(ip) do
+    String.replace(ip, ~r|\.\d+$|, ".1")
   end
 end
