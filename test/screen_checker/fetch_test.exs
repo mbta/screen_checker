@@ -1,7 +1,7 @@
 defmodule ScreenChecker.FetchTest do
   use ExUnit.Case
   import Mock
-  alias ScreenChecker.Fetch
+  alias ScreenChecker.{Ping, Fetch}
 
   describe "fetch_status/1" do
     test "sends request to the correct url" do
@@ -24,9 +24,12 @@ defmodule ScreenChecker.FetchTest do
       end
     end
 
-    test "returns :connection_error when request failed" do
-      with_mock HTTPoison, get: fn _, _, _ -> {:error, :reason} end do
-        assert :connection_error == Fetch.fetch_status("")
+    test "returns {:connection_error, <switch ping result>} when request failed" do
+      with_mocks [
+        {HTTPoison, [], get: fn _, _, _ -> {:error, :reason} end},
+        {Ping, [], switch_pingable?: fn _ -> true end}
+      ] do
+        assert {:connection_error, true} == Fetch.fetch_status("")
       end
     end
 
