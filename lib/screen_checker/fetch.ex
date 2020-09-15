@@ -18,20 +18,10 @@ defmodule ScreenChecker.Fetch do
          {:parse, {:ok, %{"Temperature" => _} = parsed}} <- {:parse, Jason.decode(body)} do
       {:ok, parsed}
     else
-      {:request, {:error, _}} ->
-        case ping_switch(ip) do
-          {:ok, _} -> {:connection_error, true}
-          {:error, _} -> {:connection_error, false}
-        end
-
-      %{status_code: status_code} ->
-        {:bad_status, status_code}
-
-      {:parse, _} ->
-        :invalid_response
-
-      _ ->
-        :error
+      {:request, {:error, _}} -> {:connection_error, switch_pingable?(ip)}
+      %{status_code: status_code} -> {:bad_status, status_code}
+      {:parse, _} -> :invalid_response
+      _ -> :error
     end
   end
 
@@ -39,13 +29,27 @@ defmodule ScreenChecker.Fetch do
     HTTPoison.get("http://#{ip}/cgi-bin/getstatus.cgi", @headers, @opts)
   end
 
-  defp ping_switch(ip) do
-    ip
-    |> switch_ip_from_screen_ip()
-    |> ScreenChecker.ICMP.ping()
+  defp switch_pingable?(screen_ip) do
+    screen_ip
+    |> screen_ip_to_switch_ip()
+    |> ping_once()
+    |> case do
+      {_, 0} -> true
+      _ -> false
+    end
   end
 
-  defp switch_ip_from_screen_ip(ip) do
+  defp screen_ip_to_switch_ip(ip) do
     String.replace(ip, ~r|\.\d+$|, ".1")
+  end
+
+  defp ping_once(ip) do
+    cmd_args =
+      case :os.type() do
+        {:win32, _} -> ~w[-n 1 #{ip}]
+        {:unix, _} -> ~w[-c 1 #{ip}]
+      end
+
+    System.cmd("ping", cmd_args, stderr_to_stdout: true)
   end
 end
