@@ -1,5 +1,6 @@
 defmodule ScreenChecker.Fetch do
   @moduledoc false
+  alias ScreenChecker.Ping
 
   @headers []
   @opts [timeout: 2_000, recv_timeout: 15_000]
@@ -18,7 +19,7 @@ defmodule ScreenChecker.Fetch do
          {:parse, {:ok, %{"Temperature" => _} = parsed}} <- {:parse, Jason.decode(body)} do
       {:ok, parsed}
     else
-      {:request, {:error, _}} -> :connection_error
+      {:request, {:error, _}} -> {:connection_error, Ping.switch_pingable?(ip)}
       %{status_code: status_code} -> {:bad_status, status_code}
       {:parse, _} -> :invalid_response
       _ -> :error
