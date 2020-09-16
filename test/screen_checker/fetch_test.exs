@@ -1,7 +1,7 @@
 defmodule ScreenChecker.FetchTest do
   use ExUnit.Case
   import Mock
-  alias ScreenChecker.{Ping, Fetch}
+  alias ScreenChecker.{Fetch, Ping}
 
   describe "fetch_status/1" do
     test "sends request to the correct url" do
