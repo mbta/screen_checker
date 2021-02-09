@@ -7,7 +7,7 @@ defmodule ScreenChecker.Fetch do
 
   def fetch_status(ip) do
     case fetch(ip) do
-      {:ok, %{"Temperature" => -1}} -> :asleep
+      {:ok, %{"Temperature" => -1, "Environment Light" => -1}} -> :asleep
       {:ok, %{"Temperature" => t}} -> {:up, t}
       other -> other
     end

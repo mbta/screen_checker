@@ -11,9 +11,11 @@ defmodule ScreenChecker.FetchTest do
       end
     end
 
-    test "returns :asleep when response body has `\"Temperature\": -1`" do
+    test "returns :asleep when response body has `\"Temperature\": -1`, \"Environment Light\": -1" do
       with_mock HTTPoison,
-        get: fn _url, _headers, _opts -> httpoison_ok(~s[{"Temperature":-1}]) end do
+        get: fn _url, _headers, _opts ->
+          httpoison_ok(~s[{"Temperature":-1,"Environment Light":-1}])
+        end do
         assert :asleep == Fetch.fetch_status("")
       end
     end
@@ -21,6 +23,13 @@ defmodule ScreenChecker.FetchTest do
     test "returns {:up, temp} when response body has `\"Temperature\": temp` where temp != -1" do
       with_mock HTTPoison, get: fn _, _, _ -> httpoison_ok(~s[{"Temperature":42}]) end do
         assert {:up, 42} == Fetch.fetch_status("")
+      end
+    end
+
+    test "returns {:up, temp} when temperature is -1 C as long as environment light is not -1" do
+      with_mock HTTPoison,
+        get: fn _, _, _ -> httpoison_ok(~s[{"Temperature":-1,"Environment Light":180}]) end do
+        assert {:up, -1} == Fetch.fetch_status("")
       end
     end
 
