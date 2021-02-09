@@ -18,9 +18,9 @@ defmodule ScreenChecker.FetchTest do
       end
     end
 
-    test "returns :up when response body has `\"Temperature\": <anything but -1>`" do
-      with_mock HTTPoison, get: fn _, _, _ -> httpoison_ok(~s[{"Temperature":0}]) end do
-        assert :up == Fetch.fetch_status("")
+    test "returns {:up, temp} when response body has `\"Temperature\": temp` where temp != -1" do
+      with_mock HTTPoison, get: fn _, _, _ -> httpoison_ok(~s[{"Temperature":42}]) end do
+        assert {:up, 42} == Fetch.fetch_status("")
       end
     end
 

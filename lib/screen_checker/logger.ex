@@ -23,5 +23,5 @@ defmodule ScreenChecker.Logger do
 
   defp status_to_message(:invalid_response), do: "solari_screen_invalid_response"
   defp status_to_message(:error), do: "solari_screen_unknown_error"
-  defp status_to_message(:up), do: "solari_screen_up"
+  defp status_to_message({:up, temp}), do: "solari_screen_up temperature=#{temp}"
 end
