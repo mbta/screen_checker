@@ -38,17 +38,6 @@ defmodule ScreenChecker.Job do
   def handle_info(:refresh, screens) do
     schedule_refresh(self())
 
-    _ = log_screens(screens)
-
-    {:noreply, screens}
-  end
-
-  defp schedule_refresh(pid) do
-    Process.send_after(pid, :refresh, ScreenChecker.Time.next_minute_ms())
-    :ok
-  end
-
-  defp log_screens(screens) do
     Logger.info("Logging status")
 
     _ =
@@ -56,7 +45,12 @@ defmodule ScreenChecker.Job do
       |> Task.async_stream(&log_status/1, ordered: false, timeout: 20_000)
       |> Stream.run()
 
-    nil
+    {:noreply, screens}
+  end
+
+  defp schedule_refresh(pid) do
+    Process.send_after(pid, :refresh, ScreenChecker.Time.next_minute_ms())
+    :ok
   end
 
   defp log_status({ip, name}) do
