@@ -9,12 +9,12 @@ mix deps.get
 
 Run locally with
 ```sh
-mix run --no-halt
+SCREEN_CHECKER_SCREENS='[["<ip>", "<name>"], ...]' mix run --no-halt
 ```
 
 Test with
 ```sh
- MIX_ENV=test mix coveralls.json
+MIX_ENV=test mix coveralls.json
 ```
 
 # Deploying

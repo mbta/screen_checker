@@ -1,26 +1,13 @@
 defmodule ScreenChecker.Job do
   @moduledoc """
-  Stateless GenServer that regularly checks screen statuses and logs results to splunk
+  GenServer that loads a list of screens into state on init and regularly logs their statuses to splunk
   """
 
   require Logger
 
   use GenServer
 
-  @solari_screens [
-    {"172.19.43.25", "ashmont"},
-    {"172.19.36.25", "central"},
-    {"172.19.117.20", "nubian_platform_a"},
-    {"172.19.117.21", "nubian_platform_c"},
-    {"172.19.87.25", "forest_hills_lobby"},
-    {"172.19.87.26", "forest_hills_upper_busway"},
-    {"172.19.35.25", "harvard"},
-    {"172.19.76.25", "haymarket"},
-    {"172.19.10.25", "maverick"},
-    {"172.19.82.25", "ruggles"},
-    {"172.19.73.25", "sullivan_square"},
-    {"172.19.18.25", "wonderland"}
-  ]
+  @screens_env_var "SCREEN_CHECKER_SCREENS"
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -32,7 +19,13 @@ defmodule ScreenChecker.Job do
   def init(:ok) do
     Logger.info("Started ScreenChecker.Job")
     schedule_refresh(self())
-    {:ok, %{}}
+
+    screens =
+      @screens_env_var
+      |> System.get_env()
+      |> parse_screens()
+
+    {:ok, screens}
   end
 
   @impl true
@@ -42,17 +35,12 @@ defmodule ScreenChecker.Job do
     {:noreply, state}
   end
 
-  def handle_info(:refresh, state) do
+  def handle_info(:refresh, screens) do
     schedule_refresh(self())
 
-    Logger.info("Logging status")
+    _ = log_screens(screens)
 
-    _ =
-      @solari_screens
-      |> Task.async_stream(&log_status/1, ordered: false, timeout: 20_000)
-      |> Stream.run()
-
-    {:noreply, state}
+    {:noreply, screens}
   end
 
   defp schedule_refresh(pid) do
@@ -60,9 +48,40 @@ defmodule ScreenChecker.Job do
     :ok
   end
 
+  defp log_screens(screens) do
+    Logger.info("Logging status")
+
+    _ =
+      screens
+      |> Task.async_stream(&log_status/1, ordered: false, timeout: 20_000)
+      |> Stream.run()
+
+    nil
+  end
+
   defp log_status({ip, name}) do
     status = ScreenChecker.Fetch.fetch_status(ip)
 
     _ = ScreenChecker.Logger.log_screen_status(ip, name, status)
+  end
+
+  defp parse_screens(nil) do
+    Logger.warn("#{@screens_env_var} environment variable is not defined")
+    []
+  end
+
+  defp parse_screens(screens_json) do
+    # JSON string of the form `[[ip, name], ...]` expected
+    case Jason.decode(screens_json) do
+      {:ok, screens} ->
+        Enum.map(screens, &List.to_tuple/1)
+
+      {:error, _} ->
+        Logger.warn(
+          "Failed to parse screen IPs/names from #{@screens_env_var} environment variable"
+        )
+
+        []
+    end
   end
 end
