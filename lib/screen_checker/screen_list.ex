@@ -26,7 +26,6 @@ defmodule ScreenChecker.ScreenList do
   end
 
   defp parse_screens(screens_json) do
-    # JSON string of the form `[[ip, name], ...]` expected
     case Jason.decode(screens_json) do
       {:ok, screens} ->
         Enum.map(screens, &parse_screen/1)
