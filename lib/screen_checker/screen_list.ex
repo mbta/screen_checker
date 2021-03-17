@@ -7,7 +7,7 @@ defmodule ScreenChecker.ScreenList do
   {"ip": string, "name": string, "protocol"?: "http" | "https" | "https_insecure"}
   ```
 
-  `protocol` defaults to `"https"` if not set.
+  `protocol` defaults to `"http"` if not set.
   """
 
   require Logger
