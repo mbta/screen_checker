@@ -7,7 +7,7 @@ defmodule ScreenChecker.Job do
 
   use GenServer
 
-  @screens_env_var "SCREEN_CHECKER_SCREENS"
+  @screen_list_module Application.compile_env!(:screen_checker, :screen_list_module)
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -20,10 +20,7 @@ defmodule ScreenChecker.Job do
     Logger.info("Started ScreenChecker.Job")
     schedule_refresh(self())
 
-    screens =
-      @screens_env_var
-      |> System.get_env()
-      |> parse_screens()
+    screens = @screen_list_module.fetch()
 
     {:ok, screens}
   end
@@ -53,29 +50,9 @@ defmodule ScreenChecker.Job do
     :ok
   end
 
-  defp log_status({ip, name}) do
-    status = ScreenChecker.Fetch.fetch_status(ip)
+  defp log_status({protocol, ip, name}) do
+    status = ScreenChecker.Fetch.fetch_status(ip, protocol)
 
     _ = ScreenChecker.Logger.log_screen_status(ip, name, status)
-  end
-
-  defp parse_screens(nil) do
-    Logger.warn("#{@screens_env_var} environment variable is not defined")
-    []
-  end
-
-  defp parse_screens(screens_json) do
-    # JSON string of the form `[[ip, name], ...]` expected
-    case Jason.decode(screens_json) do
-      {:ok, screens} ->
-        Enum.map(screens, &List.to_tuple/1)
-
-      {:error, _} ->
-        Logger.warn(
-          "Failed to parse screen IPs/names from #{@screens_env_var} environment variable"
-        )
-
-        []
-    end
   end
 end
