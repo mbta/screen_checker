@@ -12,31 +12,31 @@ defmodule ScreenChecker.ScreenList do
 
   require Logger
 
-  @screens_env_var "SCREEN_LIST"
+  @screen_list_env_var "SCREEN_LIST"
 
   def fetch do
-    @screens_env_var
-    |> System.get_env()
-    |> parse_screens()
-  end
-
-  defp parse_screens(nil) do
-    Logger.warn("#{@screens_env_var} environment variable is not defined")
-    []
-  end
-
-  defp parse_screens(screens_json) do
-    case Jason.decode(screens_json) do
-      {:ok, screens} ->
-        Enum.map(screens, &parse_screen/1)
-
-      {:error, _} ->
-        Logger.warn(
-          "Failed to parse screen IPs/names from #{@screens_env_var} environment variable"
-        )
-
+    case System.get_env(@screen_list_env_var) do
+      nil ->
+        Logger.warn("#{@screen_list_env_var} environment variable is not defined")
         []
+
+      screens_json ->
+        screens_json
+        |> Jason.decode()
+        |> parse_screens()
     end
+  end
+
+  defp parse_screens({:ok, screens}) do
+    Enum.map(screens, &parse_screen/1)
+  end
+
+  defp parse_screens({:error, _}) do
+    Logger.warn(
+      "Failed to parse screen IPs/names from #{@screen_list_env_var} environment variable"
+    )
+
+    []
   end
 
   defp parse_screen(%{"ip" => ip, "name" => name} = screen) do
