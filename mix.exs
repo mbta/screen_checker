@@ -38,9 +38,9 @@ defmodule ScreenChecker.MixProject do
       {:excoveralls, "== 0.12.3", only: :test},
       {:httpoison, "~> 1.7"},
       {:jason, "~> 1.2"},
-      {:logger_splunk_backend, git: "git@github.com:mbta/logger_splunk_backend.git"},
+      {:logger_splunk_backend, "~> 2.0.0"},
       {:mock, "~> 0.3.5", only: :test},
-      {:timex, "~> 3.6"}
+      {:timex, "~> 3.7"}
     ]
   end
 end
