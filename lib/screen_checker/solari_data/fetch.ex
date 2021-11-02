@@ -1,6 +1,6 @@
-defmodule ScreenChecker.Fetch do
+defmodule ScreenChecker.SolariData.Fetch do
   @moduledoc false
-  alias ScreenChecker.Ping
+  alias ScreenChecker.SolariData.Ping
 
   @headers []
   @opts [timeout: 2_000, recv_timeout: 15_000]

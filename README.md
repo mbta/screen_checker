@@ -1,18 +1,36 @@
 # ScreenChecker
 Small application that regularly checks screen statuses and logs them to Splunk.
 
-Bootstrap with
+Currently it logs, once per minute, the statuses of all:
+- Solari screens ([ScreenChecker.SolariData](./lib/screen_checker/solari_data.ex))
+- GDS screens ([ScreenChecker.GdsData modules](./lib/screen_checker/gds_data/))
+
+The list of Solari screen IPs is provided by an environment variable.
+We fetch the list of active GDS screens from an API endpoint.
+
+## Bootstrap with
 ```sh
 asdf install
 mix deps.get
 ```
 
-Run locally with
+## Run locally with
 ```sh
-SCREEN_CHECKER_SCREENS='[["<ip>", "<name>"], ...]' mix run --no-halt
+# To skip logging Solari screen statuses, set `SOLARI_SCREEN_LIST='[]'`
+# To skip logging GDS screen statuses, don't set `GDS_DMS_PASSWORD`
+SOLARI_SCREEN_LIST='[solari_screen_spec, ...]' GDS_DMS_PASSWORD='...' mix run --no-halt
 ```
 
-Test with
+where `solari_screen_spec` is a JSON object of the form
+```json
+{
+  "ip": "<IP address>",
+  "name": "<screen name for logging>",
+  "protocol": "http" | "https" | "https_insecure"
+}
+```
+
+## Test with
 ```sh
 MIX_ENV=test mix coveralls.json
 ```

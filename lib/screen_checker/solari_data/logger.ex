@@ -1,4 +1,4 @@
-defmodule ScreenChecker.Logger do
+defmodule ScreenChecker.SolariData.Logger do
   @moduledoc false
 
   require Logger

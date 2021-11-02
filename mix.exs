@@ -40,7 +40,8 @@ defmodule ScreenChecker.MixProject do
       {:jason, "~> 1.2"},
       {:logger_splunk_backend, "~> 2.0.0"},
       {:mock, "~> 0.3.5", only: :test},
-      {:timex, "~> 3.7"}
+      {:timex, "~> 3.7"},
+      {:sweet_xml, "~> 0.7.0"}
     ]
   end
 end

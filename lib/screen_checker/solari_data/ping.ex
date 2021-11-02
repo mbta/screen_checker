@@ -1,4 +1,4 @@
-defmodule ScreenChecker.Ping do
+defmodule ScreenChecker.SolariData.Ping do
   @moduledoc false
 
   def switch_pingable?(screen_ip) do

@@ -1,13 +1,16 @@
-defmodule ScreenChecker.Job do
+defmodule ScreenChecker.SolariData do
   @moduledoc """
-  GenServer that loads a list of screens into state on init and regularly logs their statuses to splunk
+  GenServer that loads a list of Solari screens into state on init and regularly logs their statuses to splunk
   """
 
   require Logger
 
   use GenServer
 
-  @screen_list_module Application.compile_env!(:screen_checker, :screen_list_module)
+  alias ScreenChecker.SolariData.Fetch
+  alias ScreenChecker.SolariData.Logger, as: SolariLogger
+
+  @solari_screen_list_module Application.compile_env!(:screen_checker, :solari_screen_list_module)
 
   def start_link(opts \\ []) do
     GenServer.start_link(__MODULE__, :ok, opts)
@@ -17,10 +20,10 @@ defmodule ScreenChecker.Job do
 
   @impl true
   def init(:ok) do
-    Logger.info("Started ScreenChecker.Job")
+    Logger.info("Started ScreenChecker.SolariData")
     schedule_refresh(self())
 
-    screens = @screen_list_module.fetch()
+    screens = @solari_screen_list_module.fetch()
 
     {:ok, screens}
   end
@@ -35,7 +38,7 @@ defmodule ScreenChecker.Job do
   def handle_info(:refresh, screens) do
     schedule_refresh(self())
 
-    Logger.info("Logging status")
+    Logger.info("Logging Solari status")
 
     _ =
       screens
@@ -51,8 +54,8 @@ defmodule ScreenChecker.Job do
   end
 
   defp log_status({protocol, ip, name}) do
-    status = ScreenChecker.Fetch.fetch_status(ip, protocol)
+    status = Fetch.fetch_status(ip, protocol)
 
-    _ = ScreenChecker.Logger.log_screen_status(ip, name, status)
+    _ = SolariLogger.log_screen_status(ip, name, status)
   end
 end

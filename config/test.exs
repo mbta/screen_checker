@@ -1,4 +1,4 @@
 import Config
 
 config :screen_checker,
-  screen_list_module: ScreenChecker.FakeScreenList
+  solari_screen_list_module: ScreenChecker.FakeSolariScreenList
