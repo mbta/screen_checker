@@ -1,8 +1,8 @@
-defmodule ScreenChecker.FetchTest do
+defmodule ScreenChecker.SolariData.FetchTest do
   use ExUnit.Case
 
   import Mock
-  alias ScreenChecker.{Fetch, Ping}
+  alias ScreenChecker.SolariData.{Fetch, Ping}
 
   describe "fetch_status/1" do
     test "sends request to the correct url" do

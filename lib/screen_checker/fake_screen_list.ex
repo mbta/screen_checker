@@ -1,4 +1,4 @@
-defmodule ScreenChecker.FakeScreenList do
+defmodule ScreenChecker.FakeSolariScreenList do
   @moduledoc false
 
   def fetch, do: []

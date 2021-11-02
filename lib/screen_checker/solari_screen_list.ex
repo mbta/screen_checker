@@ -1,6 +1,6 @@
-defmodule ScreenChecker.ScreenList do
+defmodule ScreenChecker.SolariScreenList do
   @moduledoc """
-  Functions to fetch and parse the screen list config from an env var containing a JSON string.
+  Functions to fetch and parse the Solari screen list config from an env var containing a JSON string.
 
   Screen list is expected to be an array of objects of the form:
   ```ts
@@ -12,12 +12,12 @@ defmodule ScreenChecker.ScreenList do
 
   require Logger
 
-  @screen_list_env_var "SCREEN_LIST"
+  @solari_screen_list_env_var "SOLARI_SCREEN_LIST"
 
   def fetch do
-    case System.get_env(@screen_list_env_var) do
+    case System.get_env(@solari_screen_list_env_var) do
       nil ->
-        Logger.warn("#{@screen_list_env_var} environment variable is not defined")
+        Logger.warn("#{@solari_screen_list_env_var} environment variable is not defined")
         []
 
       screens_json ->
@@ -33,7 +33,7 @@ defmodule ScreenChecker.ScreenList do
 
   defp parse_screens({:error, _}) do
     Logger.warn(
-      "Failed to parse screen IPs/names from #{@screen_list_env_var} environment variable"
+      "Failed to parse screen IPs/names from #{@solari_screen_list_env_var} environment variable"
     )
 
     []

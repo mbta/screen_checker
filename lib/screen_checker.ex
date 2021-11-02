@@ -7,7 +7,10 @@ defmodule ScreenChecker do
   def start(_type, _args) do
     Logger.info("Starting up ScreenChecker")
 
-    children = [ScreenChecker.Job]
+    children = [
+      ScreenChecker.SolariData,
+      ScreenChecker.GdsData.Supervisor
+    ]
 
     opts = [strategy: :one_for_one, name: ScreenChecker.Supervisor]
 
