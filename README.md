@@ -26,7 +26,7 @@ where `solari_screen_spec` is a JSON object of the form
 {
   "ip": "<IP address>",
   "name": "<screen name for logging>",
-  "protocol": "http" | "https" | "https_insecure"
+  "protocol": "<one of 'http' | 'https' | 'https_insecure'>"
 }
 ```
 
