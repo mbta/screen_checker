@@ -43,7 +43,7 @@ defmodule ScreenChecker.GdsData.Fetch do
   defp do_get_token do
     params = %{
       "UserName" => Application.get_env(:screen_checker, :gds_dms_username),
-      "Password" => Application.get_env(:screen_checker, :gds_dms_password),
+      "Password" => System.get_env("GDS_DMS_PASSWORD"),
       "Company" => "M B T A",
       "AspxAutoDetectCookieSupport" => 1
     }

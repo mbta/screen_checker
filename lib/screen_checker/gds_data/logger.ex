@@ -8,7 +8,7 @@ defmodule ScreenChecker.GdsData.Logger do
     VendorLogger.log_data(
       &Fetch.fetch_data_for_current_day/0,
       :gds,
-      :gds_dms_password
+      "GDS_DMS_PASSWORD"
     )
   end
 end
