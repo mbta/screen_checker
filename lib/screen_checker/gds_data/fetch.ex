@@ -88,7 +88,8 @@ defmodule ScreenChecker.GdsData.Fetch do
           temp: ~x"./temp_internal/text()"s,
           humidity: ~x"./humidity/text()"s,
           call: ~x"./LastCall/text()"s,
-          sn: ~x"./sn/text()"s
+          sn: ~x"./sn/text()"s,
+          ping_count: ~x"./Ping24/text()"s
         ]
       )
 
@@ -106,7 +107,8 @@ defmodule ScreenChecker.GdsData.Fetch do
          humidity: humidity_str,
          name: screen_name,
          sn: screen_sn,
-         temp: temp_str
+         temp: temp_str,
+         ping_count: ping_count
        }) do
     {screen_sn,
      %{
@@ -115,7 +117,8 @@ defmodule ScreenChecker.GdsData.Fetch do
        temperature: parse_european_decimal(temp_str),
        log_time: parse_european_datetime(call_str),
        screen_name: screen_name,
-       time: DateTime.utc_now()
+       time: DateTime.utc_now(),
+       ping_count: ping_count
      }}
   end
 
