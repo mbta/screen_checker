@@ -1,27 +1,34 @@
 # ScreenChecker
+
 Small application that regularly checks screen statuses and logs them to Splunk.
 
 Currently it logs, once per minute, the statuses of all:
+
 - Solari screens ([ScreenChecker.SolariData](./lib/screen_checker/solari_data.ex))
 - GDS screens ([ScreenChecker.GdsData modules](./lib/screen_checker/gds_data/))
+- Mercury screens ([ScreenChecker.MercuryData module](./lib/screen_checker/mercury_data))
 
 The list of Solari screen IPs is provided by an environment variable.
-We fetch the list of active GDS screens from an API endpoint.
+We fetch the list of active GDS and Mercury screens from an API endpoint.
 
 ## Bootstrap with
+
 ```sh
 asdf install
 mix deps.get
 ```
 
 ## Run locally with
+
 ```sh
 # To skip logging Solari screen statuses, set `SOLARI_SCREEN_LIST='[]'`
 # To skip logging GDS screen statuses, don't set `GDS_DMS_PASSWORD`
-SOLARI_SCREEN_LIST='[solari_screen_spec, ...]' GDS_DMS_PASSWORD='...' mix run --no-halt
+# To skip logging Mercury screen statuses, don't set `MERCURY_API_KEY`
+SOLARI_SCREEN_LIST='[solari_screen_spec, ...]' GDS_DMS_PASSWORD='...' MERCURY_API_KEY='...' mix run --no-halt
 ```
 
 where `solari_screen_spec` is a JSON object of the form
+
 ```json
 {
   "ip": "<IP address>",
@@ -31,11 +38,13 @@ where `solari_screen_spec` is a JSON object of the form
 ```
 
 ## Test with
+
 ```sh
 MIX_ENV=test mix coveralls.json
 ```
 
 # Deploying
+
 Screen checker runs as a Windows service on Opstech3.
 
 The version of Erlang we use is precompiled Erlang/OTP 22.1, installed via [this Windows installer](https://www.erlang-solutions.com/resources/download.html) to `/c/Users/RTRUser/bin/`.
@@ -49,9 +58,11 @@ We build the application via Elixir-native `mix release`, setting the `PATH` to 
 To manage the Windows service we use [`WinSW 2.9`](https://github.com/winsw/winsw/releases/tag/v2.9.0). The service is configured via an XML file in `/c/Users/RTRUser/apps/`. In particular, environment variables are updated by editing the XML file.
 
 ## First time, one-time setup if you're a new user on Opstech3
+
 Open File Explorer and navigate to `C:\Users\RTRUser`. Confirm admin access if it asks.
 
 ## Deploying a new version
+
 1. In Git Bash, navigate to `/c/Users/RTRUser/GitHub/screen_checker`.
 1. `git pull` the latest version.
 1. Run `./build_release.sh screen_checker` to compile a new release. The second argument gives the name of the Erlang node to run the release under and isn't terribly important as long as it's unique.
@@ -60,6 +71,7 @@ Open File Explorer and navigate to `C:\Users\RTRUser`. Confirm admin access if i
 1. Push the tag to GitHub: `git push origin yyyy-mm-dd`.
 
 ## Getting service config changes to take effect
+
 If you make changes to the WinSW service's XML config (located at `C:\Users\RTRUser\apps\screen_checker.xml`), you will need to recreate the service.
 
 1. Make your config changes.
