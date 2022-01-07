@@ -9,7 +9,8 @@ defmodule ScreenChecker do
 
     children = [
       ScreenChecker.SolariData,
-      ScreenChecker.GdsData.Supervisor
+      ScreenChecker.GdsData.Supervisor,
+      ScreenChecker.MercuryData.Supervisor
     ]
 
     opts = [strategy: :one_for_one, name: ScreenChecker.Supervisor]
