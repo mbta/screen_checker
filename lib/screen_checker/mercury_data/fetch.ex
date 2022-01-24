@@ -44,8 +44,8 @@ defmodule ScreenChecker.MercuryData.Fetch do
       uptime: "Uptime",
       connect_reason: "ConnectReason",
       connectivity_used: "ConnectivityUsed",
-      last_image_time: "LastImage",
-      last_data_time: "LastData"
+      last_image_time: "last_image_time",
+      last_data_time: "last_data_time"
     }
     |> Enum.map(fn {name, status_key} -> {name, Map.get(status, status_key)} end)
     |> Enum.into(%{})
