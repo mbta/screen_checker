@@ -26,6 +26,6 @@ jobs:
       task-memory: 256M
     secrets:
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       docker-repo: ${{ secrets.DOCKER_REPO }}
       slack-webhook: ${{ secrets.SLACK_WEBHOOK }}
