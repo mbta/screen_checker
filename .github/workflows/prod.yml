@@ -27,6 +27,3 @@ jobs:
     secrets:
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      docker-repo: ${{ secrets.DOCKER_REPO }}
-      splunk-host: ${{ secrets.SPLUNK_HOST }}
-      splunk-token-arn: ${{ secrets.SPLUNK_TOKEN_ARN }}
