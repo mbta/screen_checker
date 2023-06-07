@@ -5,3 +5,6 @@ config :screen_checker,
   gds_dms_username: "mbtadata@gmail.com"
 
 import_config "#{Mix.env()}.exs"
+
+config :logger,
+  backends: [:console]
