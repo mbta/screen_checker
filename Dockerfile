@@ -31,7 +31,7 @@ COPY lib lib
 RUN mix release
 
 FROM $FROM_IMAGE
-ARG ERTS_VERSION=14.0.1
+ARG ERTS_VERSION=13.0
 
 USER ContainerAdministrator
 COPY --from=build C:\\Erlang\\vcredist_x64.exe vcredist_x64.exe
