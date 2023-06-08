@@ -25,7 +25,7 @@ defmodule ScreenChecker.MixProject do
   # Run "mix help compile.app" to learn about applications.
   def application do
     [
-      extra_applications: [:logger],
+      extra_applications: [:logger, :ehmon],
       mod: {ScreenChecker, []}
     ]
   end
@@ -35,6 +35,7 @@ defmodule ScreenChecker.MixProject do
     [
       {:credo, "~> 1.4.0", only: [:dev, :test]},
       {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
+      {:ehmon, github: "mbta/ehmon", only: :prod},
       {:excoveralls, "== 0.12.3", only: :test},
       {:httpoison, "~> 1.7"},
       {:jason, "~> 1.2"},
