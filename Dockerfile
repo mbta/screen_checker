@@ -1,5 +1,5 @@
-ARG ELIXIR_VERSION=1.12.3
-ARG ERLANG_VERSION=22.3
+ARG ELIXIR_VERSION=1.14.3
+ARG ERLANG_VERSION=25.3.2
 ARG WINDOWS_VERSION=1809
 # See also: ERTS_VERSION in the from image below
 
@@ -31,7 +31,7 @@ COPY lib lib
 RUN mix release
 
 FROM $FROM_IMAGE
-ARG ERTS_VERSION=10.7
+ARG ERTS_VERSION=14.0.1
 
 USER ContainerAdministrator
 COPY --from=build C:\\Erlang\\vcredist_x64.exe vcredist_x64.exe
