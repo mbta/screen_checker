@@ -22,8 +22,8 @@ jobs:
       environment: prod
       on-prem-cluster: hsctd-prod-managers
       splunk-index: screens-prod-application
-      task-cpu: 0.5
-      task-memory: 512M
+      task-cpu: 1.0
+      task-memory: 1024M
     secrets:
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
