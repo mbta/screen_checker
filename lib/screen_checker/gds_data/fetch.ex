@@ -56,7 +56,9 @@ defmodule ScreenChecker.GdsData.Fetch do
   defp parse_token(xml) do
     token =
       xml
-      |> xpath(~x"//string/text()")
+      # |> xpath(~x"//string/text()")
+      # ^ Several orders of magnitude slower!
+      |> get_inner_xml_from_string_tag()
       |> xpath(~x"//Token/text()"s)
 
     {:ok, token}
@@ -79,7 +81,9 @@ defmodule ScreenChecker.GdsData.Fetch do
   defp parse_devices_data(xml) do
     %{logs: logs} =
       xml
-      |> xpath(~x"//string/text()")
+      # |> xpath(~x"//string/text()")
+      # ^ Several orders of magnitude slower!
+      |> get_inner_xml_from_string_tag()
       |> xmap(
         logs: [
           ~x"//Devices/Device"l,
@@ -100,6 +104,22 @@ defmodule ScreenChecker.GdsData.Fetch do
 
     {:ok, devices_data}
   end
+
+  # Gets content of the <string> tag and does basic character unescaping on it to produce a new XML string.
+  # (We don't need to handle any of the extra special escape formats like &#...; or CDATA. They aren't used for this data.)
+  # (If they ever start being used, xpath functions will fail on the improperly-unescaped XML and we'll get alerted about missing logs.)
+  def get_inner_xml_from_string_tag(xml) do
+    ~r|<string xmlns="http://tempuri\.org/">(.*)</string>|
+    |> Regex.run(xml, capture: :all_but_first)
+    |> hd()
+    |> String.replace(~w[&quot; &apos; &lt; &gt; &amp;], &unescape_special_char/1)
+  end
+
+  defp unescape_special_char("&quot;"), do: "\""
+  defp unescape_special_char("&apos;"), do: "'"
+  defp unescape_special_char("&lt;"), do: "<"
+  defp unescape_special_char("&gt;"), do: ">"
+  defp unescape_special_char("&amp;"), do: "&"
 
   defp parse_device_log(%{
          battery: battery_str,
