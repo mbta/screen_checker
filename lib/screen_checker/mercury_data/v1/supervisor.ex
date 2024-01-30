@@ -1,4 +1,4 @@
-defmodule ScreenChecker.MercuryData.Supervisor do
+defmodule ScreenChecker.MercuryData.V1.Supervisor do
   @moduledoc false
 
   use Supervisor
@@ -9,7 +9,7 @@ defmodule ScreenChecker.MercuryData.Supervisor do
 
   def init(:ok) do
     children = [
-      {ScreenChecker.MercuryData.State, [name: ScreenChecker.MercuryData.State]}
+      {ScreenChecker.MercuryData.V1.State, [name: ScreenChecker.MercuryData.V1.State]}
     ]
 
     Supervisor.init(children, strategy: :one_for_one)

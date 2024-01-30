@@ -1,7 +1,7 @@
-defmodule ScreenChecker.MercuryData.Logger do
+defmodule ScreenChecker.MercuryData.V1.Logger do
   @moduledoc false
 
-  alias ScreenChecker.MercuryData.Fetch
+  alias ScreenChecker.MercuryData.V1.Fetch
   alias ScreenChecker.VendorData.Logger, as: VendorLogger
 
   def log_data do
