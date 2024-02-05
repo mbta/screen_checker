@@ -34,34 +34,46 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
   end
 
   defp fetch_relevant_fields(%{
-         "State" => state,
          "screens" => [screen],
-         "Options" => %{"Name" => name}
+         "battery_level" => battery
        }) do
     status_fields = fetch_relevant_status_fields(screen)
 
-    Map.merge(status_fields, %{
-      state: state,
-      name: name
-    })
+    Map.merge(status_fields, %{battery: battery})
   end
 
   defp fetch_relevant_status_fields(status) do
+    %{
+      "latest_logs" => %{
+        "GSMStatus" => %{"rssi" => signal_strength},
+        "status" => %{"internal_temp" => temperature, "battery_reading" => battery_voltage},
+        "GSMBoot" => %{"serial" => connectivity_used},
+        "boot" => %{"reset_cause" => connect_reason}
+      },
+      "State" => state,
+      "Options" => %{"Name" => name},
+      "last_heartbeat" => last_heartbeat
+    } = status
+
     # Need to figure out from Mercury where the other fields below are.
     # Could not find them in the response from the new endpoint.
     # https://mbta.slack.com/archives/C059FPCQBNG/p1706648508022929
-    # %{"latest_logs" => %{"GSMStatus" => %{"rssi" => signal_strength}, "status" => %{"internal_temp" => temperature}}}
+    # %{
+    #   external_battery: "ExternalBattery",
+    #   uptime: "Uptime",
+    #   last_image_time: "last_image_time",
+    #   last_data_time: "last_data_time"
+    # }
+
     %{
-      battery: "Battery",
-      battery_voltage: "BatteryVoltage",
-      external_battery: "ExternalBattery",
-      uptime: "Uptime",
-      connect_reason: "ConnectReason",
-      connectivity_used: "ConnectivityUsed",
-      last_image_time: "last_image_time",
-      last_data_time: "last_data_time"
+      state: state,
+      name: name,
+      battery_voltage: battery_voltage,
+      connect_reason: connect_reason,
+      connectivity_used: connectivity_used,
+      last_heartbeat: last_heartbeat,
+      signal_strength: signal_strength,
+      temperature: temperature
     }
-    |> Enum.map(fn {name, status_key} -> {name, Map.get(status, status_key)} end)
-    |> Enum.into(%{})
   end
 end
