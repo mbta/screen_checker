@@ -15,34 +15,40 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
            :mercury_v2,
            @vendor_request_opts
          ) do
-      {:ok, parsed} -> Enum.map(parsed, &fetch_device_info/1)
+      {:ok, parsed} -> {:ok, Enum.map(parsed, &fetch_device_info/1)}
       :error -> :error
     end
   end
 
   defp fetch_device_info(device) do
+    device_id = device["device_id"]
+
     case make_and_parse_request(
-           @api_url_base <> "/#{device["device_id"]}",
+           @api_url_base <> "/#{device_id}",
            @headers,
            &Jason.decode/1,
            :mercury_v2,
            @vendor_request_opts
          ) do
-      {:ok, parsed} -> {:ok, Enum.map(parsed, &fetch_relevant_fields/1)}
-      :error -> :error
+      {:ok, parsed} -> fetch_relevant_fields(parsed)
+      :error -> %{device_id: device_id, state: :error}
     end
   end
 
-  defp fetch_relevant_fields(%{
-         "screens" => [screen],
-         "battery_level" => battery
-       }) do
-    status_fields = fetch_relevant_status_fields(screen)
+  defp fetch_relevant_fields(device) do
+    %{
+      "device_id" => device_id,
+      "screens" => [screen],
+      "battery_level" => battery,
+      "stop" => %{"stop_id" => stop_id}
+    } = device
 
-    Map.merge(status_fields, %{battery: battery})
+    screen_fields = fetch_relevant_screen_fields(screen)
+
+    Map.merge(screen_fields, %{device_id: device_id, stop_id: stop_id, battery: battery})
   end
 
-  defp fetch_relevant_status_fields(status) do
+  defp fetch_relevant_screen_fields(status) do
     %{
       "latest_logs" => %{
         "GSMStatus" => %{"rssi" => signal_strength},
@@ -54,16 +60,6 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
       "Options" => %{"Name" => name},
       "last_heartbeat" => last_heartbeat
     } = status
-
-    # Need to figure out from Mercury where the other fields below are.
-    # Could not find them in the response from the new endpoint.
-    # https://mbta.slack.com/archives/C059FPCQBNG/p1706648508022929
-    # %{
-    #   external_battery: "ExternalBattery",
-    #   uptime: "Uptime",
-    #   last_image_time: "last_image_time",
-    #   last_data_time: "last_data_time"
-    # }
 
     %{
       state: state,
