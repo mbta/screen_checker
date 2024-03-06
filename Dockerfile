@@ -27,6 +27,10 @@ RUN mix release linux
 # The one the elixir image was built with
 FROM alpine:${ALPINE_VERSION}
 
+RUN apk add --no-cache libssl1.1 dumb-init libstdc++ libgcc ncurses-libs && \
+    mkdir /work /screen_checker && \
+    adduser -D screen_checker && chown screen_checker /work
+
 COPY --from=build /screen_checker/_build/prod/rel/linux /screen_checker
 
 # Set exposed ports
