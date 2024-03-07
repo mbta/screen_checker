@@ -14,8 +14,8 @@ defmodule ScreenChecker.MixProject do
         plt_add_deps: true
       ],
       releases: [
-        screen_checker: [
-          include_executables_for: [:windows],
+        linux: [
+          include_executables_for: [:unix],
           applications: [runtime_tools: :permanent]
         ]
       ]

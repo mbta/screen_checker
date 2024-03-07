@@ -1,52 +1,49 @@
 ARG ELIXIR_VERSION=1.14.5
 ARG ERLANG_VERSION=25.3.2.2
-ARG WINDOWS_VERSION=1809
-# See also: ERTS_VERSION in the from image below
+ARG ALPINE_VERSION=3.18.0
 
-ARG BUILD_IMAGE=mbtatools/windows-elixir:$ELIXIR_VERSION-erlang-$ERLANG_VERSION-windows-$WINDOWS_VERSION
-ARG FROM_IMAGE=mcr.microsoft.com/windows/servercore:$WINDOWS_VERSION
-
-FROM $BUILD_IMAGE as build
+FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION} as build
 
 ENV MIX_ENV=prod
 
-# log which version of Windows we're using
-RUN ver
+RUN mkdir /screen_checker
 
-RUN mkdir C:\screen_checker
+WORKDIR /screen_checker
 
-WORKDIR C:\\screen_checker
+RUN apk add --no-cache git
+RUN mix local.hex --force && mix local.rebar --force
 
 COPY mix.exs mix.lock ./
 RUN mix deps.get
 
-COPY config/config.exs config\\config.exs
-COPY config/prod.exs config\\prod.exs
+COPY config/config.exs config/config.exs
+COPY config/prod.exs config/prod.exs
 
 RUN mix deps.compile
 
 COPY lib lib
-# ^ anything else we need to copy?
+RUN mix release linux
 
-RUN mix release
+# The one the elixir image was built with
+FROM alpine:${ALPINE_VERSION}
 
-FROM $FROM_IMAGE
-ARG ERTS_VERSION=13.2.2.1
+RUN apk add --no-cache libssl1.1 dumb-init libstdc++ libgcc ncurses-libs && \
+    mkdir /work /screen_checker && \
+    adduser -D screen_checker && chown screen_checker /work
 
-USER ContainerAdministrator
-COPY --from=build C:\\Erlang\\vcredist_x64.exe vcredist_x64.exe
-RUN .\vcredist_x64.exe /install /quiet /norestart \
-    && del vcredist_x64.exe
+COPY --from=build /screen_checker/_build/prod/rel/linux /screen_checker
 
-COPY --from=build C:\\screen_checker\\_build\\prod\\rel\\screen_checker C:\\screen_checker
+# Allow screen_checker to update the Timezone data
+RUN chown screen_checker /screen_checker/lib/tzdata-*/priv /screen_checker/lib/tzdata*/priv/*
 
-WORKDIR C:\\screen_checker
+# Set exposed ports
+ENV MIX_ENV=prod TERM=xterm LANG=C.UTF-8 \
+    ERL_CRASH_DUMP_SECONDS=0 RELEASE_TMP=/work
 
-# Ensure Erlang can run
-RUN dir && \
-    erts-%ERTS_VERSION%\bin\erl -noshell -noinput +V
+USER screen_checker
+WORKDIR /work
 
-EXPOSE 8001
-# ^ Realtime_signs uses 80 instead
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 
-CMD ["C:\\screen_checker\\bin\\screen_checker.bat", "start"]
+HEALTHCHECK CMD ["/screen_checker/bin/linux", "rpc", "1 + 1"]
+CMD ["/screen_checker/bin/linux", "start"]
