@@ -33,6 +33,9 @@ RUN apk add --no-cache libssl1.1 dumb-init libstdc++ libgcc ncurses-libs && \
 
 COPY --from=build /screen_checker/_build/prod/rel/linux /screen_checker
 
+# Allow screen_checker to update the Timezone data
+RUN chown screen_checker /screen_checker/lib/tzdata-*/priv /screen_checker/lib/tzdata*/priv/*
+
 # Set exposed ports
 ENV MIX_ENV=prod TERM=xterm LANG=C.UTF-8 \
     ERL_CRASH_DUMP_SECONDS=0 RELEASE_TMP=/work
