@@ -23,6 +23,7 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
 
   defp fetch_device_info(device) do
     device_id = device["device_id"]
+    headers = [{"apiKey", Application.get_env(:screen_checker, :mercury_v2_api_key)}]
 
     case make_and_parse_request(
            @api_url_base <> "/#{device_id}",
