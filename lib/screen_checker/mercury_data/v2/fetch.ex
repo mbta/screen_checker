@@ -1,13 +1,25 @@
 defmodule ScreenChecker.MercuryData.V2.Fetch do
   @moduledoc false
 
+  require Logger
+
   import ScreenChecker.VendorData.Fetch, only: [make_and_parse_request: 5]
 
   @api_url_base "https://api.nexus.mercuryinnovation.com.au/API/mbta/devices"
   @vendor_request_opts [hackney: [pool: :mercury_v2_api_pool]]
 
   def fetch_data do
-    headers = [{"apiKey", Application.get_env(:screen_checker, :mercury_v2_api_key)}]
+    api_key = Application.get_env(:screen_checker, :mercury_v2_api_key)
+    headers = [{"apiKey", api_key}]
+
+    msg =
+      if is_binary(api_key) and String.length(api_key) > 0 do
+        "MERCURY_V2_API_KEY is non-empty string"
+      else
+        "MERCURY_V2_API_KEY is not set"
+      end
+
+    Logger.info(msg)
 
     case make_and_parse_request(
            @api_url_base,
