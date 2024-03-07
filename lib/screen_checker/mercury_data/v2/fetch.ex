@@ -5,12 +5,13 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
 
   @api_url_base "https://api.nexus.mercuryinnovation.com.au/API/mbta/devices"
   @vendor_request_opts [hackney: [pool: :mercury_v2_api_pool]]
-  @headers [{"apiKey", System.get_env("MERCURY_V2_API_KEY")}]
 
   def fetch_data do
+    headers = [{"apiKey", Application.get_env(:screen_checker, :mercury_v2_api_key)}]
+
     case make_and_parse_request(
            @api_url_base,
-           @headers,
+           headers,
            &Jason.decode/1,
            :mercury_v2,
            @vendor_request_opts
@@ -25,7 +26,7 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
 
     case make_and_parse_request(
            @api_url_base <> "/#{device_id}",
-           @headers,
+           headers,
            &Jason.decode/1,
            :mercury_v2,
            @vendor_request_opts
