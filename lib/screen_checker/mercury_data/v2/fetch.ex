@@ -9,7 +9,7 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
   @vendor_request_opts [hackney: [pool: :mercury_v2_api_pool]]
 
   def fetch_data do
-    api_key = Application.get_env(:screen_checker, :mercury_v2_api_key)
+    api_key = get_api_key()
     headers = [{"apiKey", api_key}]
 
     msg =
@@ -33,9 +33,11 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
     end
   end
 
+  defp get_api_key, do: System.get_env("MERCURY_API_KEY")
+
   defp fetch_device_info(device) do
     device_id = device["device_id"]
-    headers = [{"apiKey", Application.get_env(:screen_checker, :mercury_v2_api_key)}]
+    headers = [{"apiKey", get_api_key()}]
 
     case make_and_parse_request(
            @api_url_base <> "/#{device_id}",
