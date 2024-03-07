@@ -1,8 +1,6 @@
 defmodule ScreenChecker.MercuryData.V2.Fetch do
   @moduledoc false
 
-  require Logger
-
   import ScreenChecker.VendorData.Fetch, only: [make_and_parse_request: 5]
 
   @api_url_base "https://api.nexus.mercuryinnovation.com.au/API/mbta/devices"
