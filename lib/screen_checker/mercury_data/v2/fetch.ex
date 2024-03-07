@@ -33,7 +33,7 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
     end
   end
 
-  defp get_api_key, do: System.get_env("MERCURY_API_KEY")
+  defp get_api_key, do: System.get_env("MERCURY_V2_API_KEY")
 
   defp fetch_device_info(device) do
     device_id = device["device_id"]
