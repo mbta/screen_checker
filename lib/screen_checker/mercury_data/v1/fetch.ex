@@ -1,4 +1,4 @@
-defmodule ScreenChecker.MercuryData.Fetch do
+defmodule ScreenChecker.MercuryData.V1.Fetch do
   @moduledoc false
 
   import ScreenChecker.VendorData.Fetch, only: [make_and_parse_request: 5]
