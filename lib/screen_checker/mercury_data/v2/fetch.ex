@@ -9,17 +9,7 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
   @vendor_request_opts [hackney: [pool: :mercury_v2_api_pool]]
 
   def fetch_data do
-    api_key = get_api_key()
-    headers = [{"apiKey", api_key}]
-
-    msg =
-      if is_binary(api_key) and String.length(api_key) > 0 do
-        "MERCURY_V2_API_KEY is non-empty string"
-      else
-        "MERCURY_V2_API_KEY is not set"
-      end
-
-    Logger.info(msg)
+    headers = [{"apiKey", get_api_key()}]
 
     case make_and_parse_request(
            @api_url_base,
