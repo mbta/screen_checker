@@ -18,10 +18,7 @@ defmodule ScreenChecker.MercuryData.V2.Fetch do
          ) do
       {:ok, parsed} ->
         prod_screens =
-          Enum.filter(parsed, fn
-            %{"stop" => %{"agency_id" => "mbta_prod"}} -> true
-            _ -> false
-          end)
+          Enum.filter(parsed, &match?(%{"stop" => %{"agency_id" => "mbta_prod"}}, &1))
 
         {:ok, Enum.map(prod_screens, &fetch_device_info/1)}
 
