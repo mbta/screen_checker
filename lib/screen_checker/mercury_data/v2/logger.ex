@@ -4,9 +4,9 @@ defmodule ScreenChecker.MercuryData.V2.Logger do
   alias ScreenChecker.MercuryData.V2.Fetch
   alias ScreenChecker.VendorData.Logger, as: VendorLogger
 
-  def log_data do
+  def log_data(since) do
     VendorLogger.log_data(
-      &Fetch.fetch_data/0,
+      fn -> Fetch.fetch_data(since) end,
       :mercury_v2,
       "MERCURY_V2_API_KEY"
     )

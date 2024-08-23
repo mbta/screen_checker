@@ -19,17 +19,20 @@ defmodule ScreenChecker.VendorData.State do
       @impl true
       def init(:ok) do
         Logger.info("Started #{__MODULE__}")
+        state = DateTime.utc_now()
         schedule_refresh(self(), ScreenChecker.Time.next_minute_ms())
-        {:ok, nil}
+        {:ok, state}
       end
 
       @impl true
-      def handle_info(:refresh, state) do
+      def handle_info(:refresh, old_state) do
         Logger.info("#{__MODULE__}: Logging status")
-        _ = Task.start(&do_log/0)
+        new_state = DateTime.utc_now()
+
+        _ = Task.start(fn -> do_log(old_state) end)
 
         schedule_refresh(self(), ScreenChecker.Time.next_minute_ms())
-        {:noreply, state}
+        {:noreply, new_state}
       end
 
       # Handle leaked :ssl_closed messages from Hackney.
