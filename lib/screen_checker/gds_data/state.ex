@@ -5,7 +5,7 @@ defmodule ScreenChecker.GdsData.State do
 
   use ScreenChecker.VendorData.State
 
-  def do_log do
+  def do_log(_) do
     GdsLogger.log_data()
     :ok
   end

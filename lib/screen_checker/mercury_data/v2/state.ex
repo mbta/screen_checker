@@ -5,8 +5,8 @@ defmodule ScreenChecker.MercuryData.V2.State do
 
   use ScreenChecker.VendorData.State
 
-  def do_log do
-    MercuryLoggerV2.log_data()
+  def do_log(since) do
+    MercuryLoggerV2.log_data(since)
     :ok
   end
 end
