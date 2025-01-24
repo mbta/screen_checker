@@ -7,7 +7,7 @@ defmodule ScreenChecker.GdsData.Fetch do
 
   import ScreenChecker.VendorData.Fetch, only: [make_and_parse_request: 4]
 
-  @gds_api_url "https://dms.gds.com/DMSService.asmx"
+  @gds_api_url "https://dmsmbta.gds.com/DMSService.asmx"
   @token_url_base "#{@gds_api_url}/GetToken"
   @device_list_url_base "#{@gds_api_url}/GetDevicesList"
 
@@ -42,7 +42,7 @@ defmodule ScreenChecker.GdsData.Fetch do
 
   defp do_get_token do
     params = %{
-      "UserName" => Application.get_env(:screen_checker, :gds_dms_username),
+      "UserName" => System.get_env("GDS_DMS_USERNAME"),
       "Password" => System.get_env("GDS_DMS_PASSWORD"),
       "Company" => "M B T A",
       "AspxAutoDetectCookieSupport" => 1
@@ -132,23 +132,18 @@ defmodule ScreenChecker.GdsData.Fetch do
        }) do
     {screen_sn,
      %{
-       battery: parse_european_decimal(battery_str),
-       humidity: parse_european_decimal(humidity_str),
-       temperature: parse_european_decimal(temp_str),
-       log_time: parse_european_datetime(call_str),
+       battery: String.to_float(battery_str),
+       humidity: String.to_float(humidity_str),
+       temperature: String.to_float(temp_str),
+       log_time: parse_datetime(call_str),
        screen_name: screen_name,
        time: DateTime.utc_now(),
        ping_count: ping_count
      }}
   end
 
-  defp parse_european_decimal(s) do
-    [integer, decimal] = String.split(s, ",", parts: 2)
-    String.to_integer(integer) + String.to_float("0." <> decimal)
-  end
-
-  defp parse_european_datetime(s) do
-    with {:ok, naive_datetime} <- Timex.parse(s, "%d/%m/%Y %H:%M:%S", :strftime),
+  defp parse_datetime(s) do
+    with {:ok, naive_datetime} <- Timex.parse(s, "%-m/%-d/%Y %-I:%M:%S %p", :strftime),
          {:ok, dt} <- DateTime.from_naive(naive_datetime, "Europe/Rome"),
          {:ok, utc_dt} <- DateTime.shift_zone(dt, "Etc/UTC") do
       utc_dt

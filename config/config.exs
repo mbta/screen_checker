@@ -1,8 +1,7 @@
 import Config
 
 config :screen_checker,
-  solari_screen_list_module: ScreenChecker.SolariScreenList,
-  gds_dms_username: "mbtadata@gmail.com"
+  solari_screen_list_module: ScreenChecker.SolariScreenList
 
 config :logger,
   backends: [:console]
