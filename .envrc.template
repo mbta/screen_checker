@@ -1,4 +1,5 @@
 # export MERCURY_API_KEY=
 # export MERCURY_V2_API_KEY=
+# export GDS_DMS_USERNAME=
 # export GDS_DMS_PASSWORD=
 # export SOLARI_SCREEN_LIST=
