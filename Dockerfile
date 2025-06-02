@@ -1,6 +1,6 @@
-ARG ELIXIR_VERSION=1.14.5
-ARG ERLANG_VERSION=25.3.2.2
-ARG ALPINE_VERSION=3.18.0
+ARG ELIXIR_VERSION=1.17.3
+ARG ERLANG_VERSION=27.3.4
+ARG ALPINE_VERSION=3.21.3
 
 FROM hexpm/elixir:${ELIXIR_VERSION}-erlang-${ERLANG_VERSION}-alpine-${ALPINE_VERSION} as build
 
@@ -25,9 +25,9 @@ COPY lib lib
 RUN mix release linux
 
 # The one the elixir image was built with
-FROM alpine:${ALPINE_VERSION}
+FROM hexpm/erlang:${ERLANG_VERSION}-alpine-${ALPINE_VERSION}
 
-RUN apk add --no-cache libssl1.1 dumb-init libstdc++ libgcc ncurses-libs && \
+RUN apk add --no-cache dumb-init && \
     mkdir /work /screen_checker && \
     adduser -D screen_checker && chown screen_checker /work
 
