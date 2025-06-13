@@ -17,7 +17,7 @@ defmodule ScreenChecker.SolariScreenList do
   def fetch do
     case System.get_env(@solari_screen_list_env_var) do
       nil ->
-        Logger.warn("#{@solari_screen_list_env_var} environment variable is not defined")
+        Logger.warning("#{@solari_screen_list_env_var} environment variable is not defined")
         []
 
       screens_json ->
@@ -32,7 +32,7 @@ defmodule ScreenChecker.SolariScreenList do
   end
 
   defp parse_screens({:error, _}) do
-    Logger.warn(
+    Logger.warning(
       "Failed to parse screen IPs/names from #{@solari_screen_list_env_var} environment variable"
     )
 

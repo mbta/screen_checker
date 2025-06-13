@@ -5,7 +5,7 @@ defmodule ScreenChecker.MixProject do
     [
       app: :screen_checker,
       version: "0.1.0",
-      elixir: "~> 1.9",
+      elixir: "~> 1.17",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       test_coverage: [tool: ExCoveralls],
@@ -34,9 +34,9 @@ defmodule ScreenChecker.MixProject do
   defp deps do
     [
       {:credo, "~> 1.4.0", only: [:dev, :test]},
-      {:dialyxir, "~> 1.0.0-rc.4", only: [:dev, :test], runtime: false},
+      {:dialyxir, "~> 1.4", only: [:dev, :test], runtime: false},
       {:ehmon, github: "mbta/ehmon", only: :prod},
-      {:excoveralls, "== 0.12.3", only: :test},
+      {:excoveralls, "~> 0.18", only: :test},
       {:httpoison, "~> 1.7"},
       {:jason, "~> 1.2"},
       {:logger_splunk_backend, "~> 2.0.0"},
